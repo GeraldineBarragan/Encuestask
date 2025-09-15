@@ -1,4 +1,42 @@
-  // Toggle sidebar
+
+      // Cambiar seccion funcion
+       document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('toggleButton1');
+            const buttonText = toggleButton.querySelector('span');
+            const buttonIcon = toggleButton.querySelector('svg');
+            const sectionA = document.getElementById('sectionA');
+            const sectionB = document.getElementById('sectionB');
+            
+            let isSectionAVisible = true;
+            
+            // Función para alternar entre secciones
+            toggleButton.addEventListener('click', function() {
+                if (isSectionAVisible) {
+                    // Mostrar sección B
+                    sectionA.classList.remove('active');
+                    sectionA.classList.add('hidden');
+                    sectionB.classList.remove('hidden');
+                    sectionB.classList.add('active');
+                    buttonText.textContent = 'Mostrar Sección A';
+                    // Rotar icono
+                    buttonIcon.style.transform = 'rotate(180deg)';
+                } else {
+                    // Mostrar sección A
+                    sectionB.classList.remove('active');
+                    sectionB.classList.add('hidden');
+                    sectionA.classList.remove('hidden');
+                    sectionA.classList.add('active');
+                    buttonText.textContent = 'Mostrar Sección B';
+                    // Restaurar icono
+                    buttonIcon.style.transform = 'rotate(0deg)';
+                }
+                
+                // Cambiar el estado
+                isSectionAVisible = !isSectionAVisible;
+            });
+        });
+
+    // Toggle sidebar
       document
         .getElementById("sidebarToggle")
         .addEventListener("click", function () {
@@ -153,3 +191,5 @@
           document.getElementById(sectionId).classList.add("active");
         });
       });
+
+

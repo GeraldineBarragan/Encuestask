@@ -1,0 +1,6 @@
+﻿RewriteEngine On
+RewriteBase /siglo/v1/
+
+# Reescribir URLs sin extensión .php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ $1.php [L]
