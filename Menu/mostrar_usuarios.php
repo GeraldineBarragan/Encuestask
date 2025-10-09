@@ -328,14 +328,14 @@ try {
                                         </span>
                                     </td>
                                     <td><?php echo date('d/m/Y H:i', strtotime($usuario['fecha_creacion'])); ?></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info" onclick="editarUsuario(<?php echo $usuario['id']; ?>)">
-                                            ✏️ Editar
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(<?php echo $usuario['id']; ?>)">
-                                            🗑️ Eliminar
-                                        </button>
-                                    </td>
+                                   <td>
+    <a href="modificar.php?id=<?php echo $usuario['id']; ?>" class="btn btn-sm btn-info">
+        <i class="fas fa-edit"></i>
+    </a>
+    <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(<?php echo $usuario['id']; ?>)">
+        <i class="fas fa-trash"></i>
+    </button>
+</td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

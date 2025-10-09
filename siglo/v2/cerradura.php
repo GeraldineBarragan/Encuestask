@@ -155,5 +155,5 @@ if($_SERVER['REQUEST_METHOD'] == "GET")
         }
 
         header('Content-type: text/plain'); // importante, no "application/json"
-            echo base64_encode(json_encode($json))
+         echo base64_encode(json_encode($json))
         ?>

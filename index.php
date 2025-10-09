@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['usuario_rol'] = $user['rol'];
 
         // Redirigir al panel o dashboard
-        header("Location: Menu/menu.php");
+        header("Location: Menu/menu1.php");
         exit;
 
     } catch (Exception $e) {
