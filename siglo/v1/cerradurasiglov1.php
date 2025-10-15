@@ -4,6 +4,23 @@ include_once('config.php');
 // Asegura que PHP use la hora de Ciudad de México
 date_default_timezone_set('America/Mexico_City');
 
+
+
+// VALIDACIÓN DE SEGURIDAD AL PRINCIPIO - CORREGIDA
+$appAuthHeader = $_SERVER['HTTP_X_APP_AUTH'] ?? null;
+
+if (!$appAuthHeader || $appAuthHeader !== 'flutter-app-key') {
+    http_response_code(403);
+    header('Content-type: application/json');
+    echo json_encode([
+        "codigo" => 0, 
+        "estatus" => 403, 
+        "msg" => "ACCESO DENEGADO"
+    ]);
+    exit;
+}
+
+
 // Códigos de acción para cierre/apertura de cerradura
 define('ACTION_ABERTURA',        1);
 define('ACTION_FECHAMENTO',      2);
@@ -162,12 +179,7 @@ if($_SERVER['REQUEST_METHOD'] == "GET")
         $json = ["codigo"=>0, "estatus"=>9, "msg"=>"FALTAN PARAMETROS ID U OPERADOR"];
     }
 }
-$headers = getallheaders();
-if (!isset($headers['X-App-Auth']) || $headers['X-App-Auth'] !== 'flutter-app-key') {
-    http_response_code(403);
-    echo 'Acceso restringido';
-    exit;
-}
+
 
 // Si viene desde Flutter, enviamos JSON normal
 header('Content-type: application/json');
