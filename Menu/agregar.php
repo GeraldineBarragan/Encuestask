@@ -17,7 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirm_password = $_POST['confirm_password'];
         $email = trim($_POST['email']);
         $rol = $_POST['rol'];
-        $estado = $_POST['estado'];
+        $estado = isset($_POST['pendiente']) ? 0 : 1;
+
 
         // Validaciones
         if (empty($nombre) || empty($usuario) || empty($password) || empty($email)) {
@@ -39,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verificar si el usuario o email ya existen
         $verificar = $db->prepare("SELECT id FROM usuarios WHERE usuario = ? OR email = ?");
         $verificar->execute([$usuario, $email]);
-        
+
         if ($verificar->rowCount() > 0) {
             throw new Exception("El usuario o email ya existen");
         }
@@ -50,81 +51,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Insertar en la base de datos
         $query = "INSERT INTO usuarios (nombre, usuario, contraseña, email, rol, estado) 
                   VALUES (?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $db->prepare($query);
         $stmt->execute([$nombre, $usuario, $password_hash, $email, $rol, $estado]);
 
         $mensaje = "✅ Usuario agregado correctamente";
-        
+
         // Limpiar el formulario después de éxito
         $_POST = array();
-
     } catch (Exception $e) {
         $error = "❌ Error: " . $e->getMessage();
     }
 }
 ?>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function checkPasswordStrength() {
-            const password = document.getElementById('password').value;
-            const strengthBar = document.getElementById('password-strength');
-            const confirmField = document.getElementById('confirm_password');
-            const matchIndicator = document.getElementById('password-match');
-            
-            let strength = 0;
-            if (password.length >= 6) strength += 1;
-            if (password.length >= 8) strength += 1;
-            if (/[A-Z]/.test(password)) strength += 1;
-            if (/[0-9]/.test(password)) strength += 1;
-            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
-            
-            // Colores según la fuerza
-            const colors = ['#dc3545', '#ffc107', '#ffc107', '#20c997', '#198754'];
-            strengthBar.style.width = (strength * 20) + '%';
-            strengthBar.style.backgroundColor = colors[strength - 1] || '#dc3545';
-            
-            // Verificar coincidencia de contraseñas
-            if (confirmField.value !== '') {
-                if (password === confirmField.value) {
-                    matchIndicator.innerHTML = '✅ Las contraseñas coinciden';
-                    matchIndicator.style.color = 'green';
-                } else {
-                    matchIndicator.innerHTML = '❌ Las contraseñas no coinciden';
-                    matchIndicator.style.color = 'red';
-                }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function checkPasswordStrength() {
+        const password = document.getElementById('password').value;
+        const strengthBar = document.getElementById('password-strength');
+        const confirmField = document.getElementById('confirm_password');
+        const matchIndicator = document.getElementById('password-match');
+
+        let strength = 0;
+        if (password.length >= 6) strength += 1;
+        if (password.length >= 8) strength += 1;
+        if (/[A-Z]/.test(password)) strength += 1;
+        if (/[0-9]/.test(password)) strength += 1;
+        if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+        // Colores según la fuerza
+        const colors = ['#dc3545', '#ffc107', '#ffc107', '#20c997', '#198754'];
+        strengthBar.style.width = (strength * 20) + '%';
+        strengthBar.style.backgroundColor = colors[strength - 1] || '#dc3545';
+
+        // Verificar coincidencia de contraseñas
+        if (confirmField.value !== '') {
+            if (password === confirmField.value) {
+                matchIndicator.innerHTML = '✅ Las contraseñas coinciden';
+                matchIndicator.style.color = 'green';
+            } else {
+                matchIndicator.innerHTML = '❌ Las contraseñas no coinciden';
+                matchIndicator.style.color = 'red';
             }
         }
-        
-        document.getElementById('confirm_password').addEventListener('input', checkPasswordStrength);
-
-        function generatePassword() {
-    const length = 12; // longitud de la contraseña
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-    let password = "";
-    for (let i = 0; i < length; i++) {
-        password += charset.charAt(Math.floor(Math.random() * charset.length));
     }
-    // Colocar en los inputs
-    document.getElementById('password').value = password;
-    document.getElementById('confirm_password').value = password;
-    
-    checkPasswordStrength();
-    // Mostrar un pequeño aviso
-    alert("🔑 Contraseña generada:\n" + password);
-}
 
-function togglePasswordVisibility() {
-    const passField = document.getElementById('password');
-    const confirmField = document.getElementById('confirm_password');
-    
-    if (passField.type === "password") {
-        passField.type = "text";
-        confirmField.type = "text";
-    } else {
-        passField.type = "password";
-        confirmField.type = "password";
+    document.getElementById('confirm_password').addEventListener('input', checkPasswordStrength);
+
+    function generatePassword() {
+        const length = 12; // longitud de la contraseña
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+        let password = "";
+        for (let i = 0; i < length; i++) {
+            password += charset.charAt(Math.floor(Math.random() * charset.length));
+        }
+        // Colocar en los inputs
+        document.getElementById('password').value = password;
+        document.getElementById('confirm_password').value = password;
+
+        checkPasswordStrength();
+        // Mostrar un pequeño aviso
+        alert("🔑 Contraseña generada:\n" + password);
     }
-}
 
-    </script>
+    function togglePasswordVisibility() {
+        const passField = document.getElementById('password');
+        const confirmField = document.getElementById('confirm_password');
+
+        if (passField.type === "password") {
+            passField.type = "text";
+            confirmField.type = "text";
+        } else {
+            passField.type = "password";
+            confirmField.type = "password";
+        }
+    }
+</script>

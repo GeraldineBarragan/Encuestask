@@ -1,20 +1,16 @@
-
-      // Cambiar seccion funcion
- document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const sectionA = document.getElementById('sectionA');
   const sectionB = document.getElementById('sectionB');
   const sectionC = document.getElementById('sectionC');
-
   const btnAB = document.getElementById('toggleButtonAB');
-  const btnC = document.getElementById('toggleButtonC');
 
   function mostrarSeccion(seccion) {
     [sectionA, sectionB, sectionC].forEach(s => s.classList.remove('active'));
     seccion.classList.add('active');
   }
 
+  // Alternar entre lista y agregar
   btnAB.addEventListener('click', () => {
-    // alternar entre lista y formulario
     if (sectionA.classList.contains('active')) {
       mostrarSeccion(sectionB);
     } else {
@@ -22,9 +18,92 @@
     }
   });
 
-  btnC.addEventListener('click', () => {
-    mostrarSeccion(sectionC);
+  // --- Múltiples botones Editar ---
+  const botonesEditar = document.querySelectorAll('.btn-editar');
+  botonesEditar.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      editarUsuario(id);
+    });
   });
+
+// --- Función para cargar datos del usuario ---
+function editarUsuario(id) {
+  fetch(`editar.php?id=${id}`)
+    .then(res => res.text())
+    .then(html => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const contenido = doc.querySelector('#contenido-editar');
+
+      const sectionC = document.getElementById('sectionC');
+      sectionC.innerHTML = ''; // Limpia el contenido anterior
+
+      if (contenido) {
+        sectionC.appendChild(contenido);
+      } else {
+        sectionC.innerHTML = '<p style="color:red;">Error: No se encontró el contenido del formulario.</p>';
+      }
+
+      // Asegura visibilidad después de insertar
+      requestAnimationFrame(() => {
+        sectionA.classList.remove('active');
+        sectionB.classList.remove('active');
+        sectionC.classList.add('active');
+      });
+
+      // Listener del formulario
+      const form = sectionC.querySelector('#formEditarUsuario');
+      if (form) {
+        form.addEventListener('submit', e => {
+          e.preventDefault();
+          const formData = new FormData(form);
+
+          fetch('actualizar_usuario.php', {
+            method: 'POST',
+            body: formData
+          })
+            .then(res => res.json())
+            .then(data => {
+              alert(data.message);
+              if (data.status === 'success') {
+                // Ocultar sección C y mostrar A
+                sectionC.classList.remove('active');
+                sectionA.classList.add('active');
+                
+                // Recargar la tabla de usuarios
+                fetch('mostrar_usuarios.php')
+                  .then(res => res.text())
+                  .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const nuevaTabla = doc.querySelector('.table-responsive');
+                    if (nuevaTabla) {
+                      const tablaActual = sectionA.querySelector('.table-responsive');
+                      if (tablaActual) {
+                        tablaActual.innerHTML = nuevaTabla.innerHTML;
+                      }
+                    }
+                    // Reinicializar los botones de editar
+                    const botonesEditar = sectionA.querySelectorAll('.btn-editar');
+                    botonesEditar.forEach(btn => {
+                      btn.addEventListener('click', () => {
+                        const id = btn.dataset.id;
+                        editarUsuario(id);
+                      });
+                    });
+                  })
+                  .catch(err => console.error('Error recargando la tabla:', err));
+              }
+            })
+            .catch(err => console.error('Error al actualizar:', err));
+        });
+      }
+    })
+    .catch(err => console.error('Error cargando usuario:', err));
+}
+
+
 });
 
 

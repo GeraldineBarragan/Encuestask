@@ -1,5 +1,7 @@
 <?php
-require_once 'editar.php';
+if (isset($_GET['id'])) {
+  include 'editar.php';
+}
 ?>
 
 <!-- Usuarios Section -->
@@ -12,9 +14,6 @@ require_once 'editar.php';
       <div class="controls">
         <button class="toggle-btn" id="toggleButtonAB">
           <i class="fas fa-plus fa-sm text-white-50"></i> Nuevo Usuario
-        </button>
-        <button class="toggle-btn" id="toggleButtonC">
-          <i class="fas fa-edit fa-sm text-white-50"></i> Editar Usuario
         </button>
       </div>
 
@@ -212,9 +211,10 @@ require_once 'editar.php';
                     <td><?php echo date('d/m/Y H:i', strtotime($usuario['fecha_creacion'])); ?></td>
                     <td><?php echo date('d/m/Y H:i', strtotime($usuario['fecha_actualizacion'])); ?></td>
                     <td>
-                      <button class="btn btn-sm btn-info" onclick="editarUsuario(<?php echo $usuario['id']; ?>)">
-                        ✏️ Editar
-                      </button>
+                      <button class="btn btn-info btn-editar" data-id="<?= $usuario['id'] ?>">✏️ Editar</button>
+
+
+
                       <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(<?php echo $usuario['id']; ?>)">
                         🗑️ Eliminar
                       </button>
@@ -338,7 +338,7 @@ require_once 'editar.php';
             </div>
           </div>
 
-          <div class="col-md-3">
+          <div class="col-md-6">
             <div class="mb-3">
               <label class="form-label required">Rol</label>
               <select class="form-select" name="rol" required>
@@ -350,18 +350,8 @@ require_once 'editar.php';
             </div>
           </div>
 
-          <div class="col-md-3">
-            <div class="mb-3">
-              <label class="form-label required">Estado</label>
-              <select class="form-select" name="estado" required>
-                <option value="">Seleccionar estado</option>
-                <option value="activo" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'activo') ? 'selected' : ''; ?>>Activo</option>
-                <option value="inactivo" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'inactivo') ? 'selected' : ''; ?>>Inactivo</option>
-                <option value="pendiente" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'pendiente') ? 'selected' : ''; ?>>Pendiente</option>
-                <option value="bloqueado" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'bloqueado') ? 'selected' : ''; ?>>Bloqueado</option>
-              </select>
-            </div>
-          </div>
+          <option value="pendiente" <?= (isset($_POST['estado']) && $_POST['estado'] == 'pendiente') ? 'selected' : '' ?>></option>
+
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -375,157 +365,69 @@ require_once 'editar.php';
       </form>
     </div>
 
-  </div>
 
 
+    <!-- seccion C -->
+    <div class="containerC section section-c" id="sectionC">
 
-  <!-- seccion C -->
-  <div class="containerC section section-c" id="sectionC">
-    <!-- Header -->
-    <div class="header-card">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h2><i class="fas fa-user-edit me-2"></i>Editar Usuario</h2>
-          <p class="mb-0">ID: <?php echo $usuario['id']; ?> | Creado: <?php echo date('d/m/Y', strtotime($usuario['fecha_creacion'])); ?></p>
-        </div>
-        <a href="mostrar_usuarios.php" class="btn btn-light">
-          <i class="fas fa-arrow-left me-1"></i>Volver
-        </a>
-      </div>
     </div>
-
-    <?php if ($error): ?>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <?php echo $error; ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    <?php endif; ?>
-
-    <?php if ($mensaje): ?>
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <?php echo $mensaje; ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    <?php endif; ?>
-
-    <?php if ($usuario): ?>
-      <form method="POST" action="">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label required">Nombre completo</label>
-              <input type="text" class="form-control" name="nombre"
-                value="<?php echo htmlspecialchars($usuario['nombre']); ?>"
-                required maxlength="100">
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label required">Nombre de usuario</label>
-              <input type="text" class="form-control" name="usuario"
-                value="<?php echo htmlspecialchars($usuario['usuario']); ?>"
-                required maxlength="50" pattern="[a-zA-Z0-9_]+"
-                title="Solo letras, números y guiones bajos">
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label required">Email</label>
-              <input type="email" class="form-control" name="email"
-                value="<?php echo htmlspecialchars($usuario['email']); ?>"
-                required maxlength="150">
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="mb-3">
-              <label class="form-label required">Rol</label>
-              <select class="form-select" name="rol" required>
-                <option value="usuario" <?php echo $usuario['rol'] == 'usuario' ? 'selected' : ''; ?>>Usuario</option>
-                <option value="moderador" <?php echo $usuario['rol'] == 'moderador' ? 'selected' : ''; ?>>Moderador</option>
-                <option value="administrador" <?php echo $usuario['rol'] == 'administrador' ? 'selected' : ''; ?>>Administrador</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="mb-3">
-              <label class="form-label required">Estado</label>
-              <select class="form-select" name="estado" required>
-                <option value="activo" <?php echo $usuario['estado'] == 'activo' ? 'selected' : ''; ?>>Activo</option>
-                <option value="inactivo" <?php echo $usuario['estado'] == 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
-                <option value="pendiente" <?php echo $usuario['estado'] == 'pendiente' ? 'selected' : ''; ?>>Pendiente</option>
-                <option value="bloqueado" <?php echo $usuario['estado'] == 'bloqueado' ? 'selected' : ''; ?>>Bloqueado</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sección de contraseña -->
-        <div class="password-section">
-          <div class="form-check form-switch mb-3">
-            <input class="form-check-input" type="checkbox" id="cambiarPassword" name="cambiar_password" value="1">
-            <label class="form-check-label" for="cambiarPassword">
-              <strong>¿Cambiar contraseña?</strong>
-            </label>
-          </div>
-
-          <div id="passwordFields" style="display: none;">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Nueva contraseña</label>
-                  <div class="input-group">
-                    <input type="password" class="form-control" name="password"
-                      id="password" minlength="6">
-                    <button type="button" class="btn btn-outline-secondary toggle-password"
-                      onclick="togglePassword('password')">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                  </div>
-                  <small class="text-muted">Mínimo 6 caracteres</small>
-                </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Confirmar contraseña</label>
-                  <div class="input-group">
-                    <input type="password" class="form-control" name="confirm_password"
-                      id="confirm_password">
-                    <button type="button" class="btn btn-outline-secondary toggle-password"
-                      onclick="togglePassword('confirm_password')">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                  </div>
-                  <div id="password-match" class="mt-1"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-          <a href="mostrar_usuarios.php" class="btn btn-secondary me-md-2">
-            <i class="fas fa-times me-1"></i>Cancelar
-          </a>
-          <button type="submit" class="btn btn-primary">
-            <i class="fas fa-save me-1"></i>Guardar Cambios
-          </button>
-        </div>
-      </form>
-    <?php else: ?>
-      <div class="alert alert-danger text-center">
-        <h4><i class="fas fa-exclamation-triangle me-2"></i>Usuario no encontrado</h4>
-        <p>El usuario que intentas editar no existe o no tienes permisos para acceder.</p>
-        <a href="mostrar_usuarios.php" class="btn btn-primary">
-          <i class="fas fa-arrow-left me-1"></i>Volver al listado
-        </a>
-      </div>
-    <?php endif; ?>
   </div>
+  <script>
+    document.querySelectorAll('.btn-editar').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+
+        // Ocultar las secciones A y B
+        document.getElementById('sectionA').style.display = 'none';
+        document.getElementById('sectionB').style.display = 'none';
+
+        // Mostrar sección C y cargar datos
+        const sectionC = document.getElementById('sectionC');
+        sectionC.style.display = 'block';
+
+        // Cargar el formulario de edición usando AJAX
+        fetch(`editar.php?id=${id}`)
+          .then(response => response.text())
+          .then(html => {
+            sectionC.innerHTML = html;
+
+            // Configurar el formulario para envío por AJAX
+            const form = sectionC.querySelector('form');
+            if (form) {
+              form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                fetch(this.action || 'editar.php', {
+                    method: 'POST',
+                    body: formData
+                  })
+                  .then(response => response.text())
+                  .then(result => {
+                    if (result.includes('success')) {
+                      // Si la actualización fue exitosa
+                      alert('Usuario actualizado correctamente');
+                      // Volver a la lista
+                      document.getElementById('sectionA').style.display = 'block';
+                      sectionC.style.display = 'none';
+                      // Recargar solo la tabla
+                      location.reload();
+                    } else {
+                      // Si hubo error, mostrar en el formulario
+                      sectionC.innerHTML = result;
+                    }
+                  });
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar el formulario');
+          });
+      });
+    });
+  </script>
+
+
+
 </div>

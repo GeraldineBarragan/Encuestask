@@ -97,27 +97,22 @@ body {
 }
 
 .section {
+  justify-content: center;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  transition: transform 0.5s ease, opacity 0.5s ease;
   opacity: 0;
   transform: translateX(100%);
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  pointer-events: none; /* 🚫 evita que las secciones ocultas bloqueen clics */
 }
 
 .section.active {
   opacity: 1;
   transform: translateX(0);
-  position: relative; /* vuelve a ocupar el flujo */
-}
-
-.section-a {
-  background: linear-gradient(135deg, #ffeaa7, #fab1a0);
-}
-
-.section-b {
-  background: linear-gradient(135deg, #81ecec, #74b9ff);
+  position: relative;
+  pointer-events: auto; /* ✅ permite clics solo en la activa */
 }
 
 /* Responsive */
@@ -167,4 +162,22 @@ body {
 
 .toggle-password:hover {
   color: #495057;
+}
+.estado-activo {
+  color: #198754;
+  font-weight: bold;
+}
+.estado-inactivo {
+  color: #dc3545;
+}
+.estado-bloqueado {
+  color: #6c757d;
+  font-weight: bold;
+}
+/* --- Solución: forzar visibilidad inmediata de sectionC cuando se carga por JS --- */
+#sectionC.active {
+  display: block !important;
+  opacity: 1 !important;
+  transform: none !important;
+  position: relative !important;
 }
