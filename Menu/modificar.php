@@ -223,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-label required">Rol</label>
                             <select class="form-select" name="rol" required>
                                 <option value="usuario" <?php echo $usuario['rol'] == 'usuario' ? 'selected' : ''; ?>>Usuario</option>
-                                <option value="moderador" <?php echo $usuario['rol'] == 'moderador' ? 'selected' : ''; ?>>Moderador</option>
+                                <option value="candidato" <?php echo $usuario['rol'] == 'candidato' ? 'selected' : ''; ?>>Candidato</option>
                                 <option value="administrador" <?php echo $usuario['rol'] == 'administrador' ? 'selected' : ''; ?>>Administrador</option>
                             </select>
                         </div>

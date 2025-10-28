@@ -22,19 +22,19 @@ try {
     $stmt_total = $db->prepare($query_total);
     $stmt_total->execute();
     $estadisticas['total'] = $stmt_total->fetch(PDO::FETCH_ASSOC)['total'];
-    
+
     // Usuarios activos
     $query_activos = "SELECT COUNT(*) as activos FROM usuarios WHERE estado = 'activo'";
     $stmt_activos = $db->prepare($query_activos);
     $stmt_activos->execute();
     $estadisticas['activos'] = $stmt_activos->fetch(PDO::FETCH_ASSOC)['activos'];
-    
+
     // Usuarios inactivos
     $query_inactivos = "SELECT COUNT(*) as inactivos FROM usuarios WHERE estado = 'inactivo'";
     $stmt_inactivos = $db->prepare($query_inactivos);
     $stmt_inactivos->execute();
     $estadisticas['inactivos'] = $stmt_inactivos->fetch(PDO::FETCH_ASSOC)['inactivos'];
-    
+
     // Nuevos usuarios este mes
     $query_nuevos = "SELECT COUNT(*) as nuevos FROM usuarios 
                     WHERE MONTH(fecha_creacion) = MONTH(CURRENT_DATE()) 
@@ -42,13 +42,12 @@ try {
     $stmt_nuevos = $db->prepare($query_nuevos);
     $stmt_nuevos->execute();
     $estadisticas['nuevos'] = $stmt_nuevos->fetch(PDO::FETCH_ASSOC)['nuevos'];
-    
+
     // Porcentajes
-    $estadisticas['porcentaje_activos'] = $estadisticas['total'] > 0 ? 
+    $estadisticas['porcentaje_activos'] = $estadisticas['total'] > 0 ?
         round(($estadisticas['activos'] / $estadisticas['total']) * 100, 1) : 0;
-    $estadisticas['porcentaje_inactivos'] = $estadisticas['total'] > 0 ? 
+    $estadisticas['porcentaje_inactivos'] = $estadisticas['total'] > 0 ?
         round(($estadisticas['inactivos'] / $estadisticas['total']) * 100, 1) : 0;
-        
 } catch (Exception $e) {
     $estadisticas = [
         'total' => 0,
@@ -63,6 +62,7 @@ try {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,67 +71,90 @@ try {
     <style>
         .dashboard-card {
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
             border: none;
         }
+
         .dashboard-card:hover {
             transform: translateY(-5px);
         }
-        .card-total { background: linear-gradient(45deg, #667eea, #764ba2); }
-        .card-activos { background: linear-gradient(45deg, #11998e, #38ef7d); }
-        .card-inactivos { background: linear-gradient(45deg, #ff416c, #ff4b2b); }
-        .card-nuevos { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
-        
+
+        .card-total {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .card-activos {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+        }
+
+        .card-inactivos {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        }
+
+        .card-nuevos {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+        }
+
         .card-text {
             font-size: 2.5rem;
             font-weight: bold;
             color: white;
         }
+
         .card-title {
             color: white;
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
         .card-icon {
             font-size: 2rem;
             opacity: 0.8;
         }
+
         .progress {
             height: 8px;
             margin-top: 10px;
         }
+
         .stats-row {
             margin-bottom: 30px;
         }
+
         .table-container {
             margin: 20px;
             padding: 20px;
             background-color: #f8f9fa;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         .table th {
             background-color: #343a40;
             color: white;
         }
+
         .estado-activo {
             color: #198754;
             font-weight: bold;
         }
+
         .estado-inactivo {
             color: #6c757d;
         }
+
         .estado-bloqueado {
             color: #dc3545;
             font-weight: bold;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-         <div class="row mb-4">
+        <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <h1 class="h3 mb-0">
@@ -186,8 +209,8 @@ try {
                                 <small><?php echo $estadisticas['activos']; ?>/<?php echo $estadisticas['total']; ?></small>
                             </div>
                             <div class="progress bg-white bg-opacity-25">
-                                <div class="progress-bar bg-white" 
-                                     style="width: <?php echo $estadisticas['porcentaje_activos']; ?>%"></div>
+                                <div class="progress-bar bg-white"
+                                    style="width: <?php echo $estadisticas['porcentaje_activos']; ?>%"></div>
                             </div>
                         </div>
                     </div>
@@ -213,8 +236,8 @@ try {
                                 <small><?php echo $estadisticas['inactivos']; ?>/<?php echo $estadisticas['total']; ?></small>
                             </div>
                             <div class="progress bg-white bg-opacity-25">
-                                <div class="progress-bar bg-white" 
-                                     style="width: <?php echo $estadisticas['porcentaje_inactivos']; ?>%"></div>
+                                <div class="progress-bar bg-white"
+                                    style="width: <?php echo $estadisticas['porcentaje_inactivos']; ?>%"></div>
                             </div>
                         </div>
                     </div>
@@ -267,8 +290,8 @@ try {
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="badge bg-warning">Otros estados</span>
-                                    <span><?php echo $estadisticas['total'] - $estadisticas['activos'] - $estadisticas['inactivos']; ?> 
-                                    (<?php echo round(100 - $estadisticas['porcentaje_activos'] - $estadisticas['porcentaje_inactivos'], 1); ?>%)</span>
+                                    <span><?php echo $estadisticas['total'] - $estadisticas['activos'] - $estadisticas['inactivos']; ?>
+                                        (<?php echo round(100 - $estadisticas['porcentaje_activos'] - $estadisticas['porcentaje_inactivos'], 1); ?>%)</span>
                                 </div>
                             </div>
                         </div>
@@ -288,13 +311,13 @@ try {
 
         <div class="table-container">
             <h2 class="text-center mb-4">📋 Lista de Usuarios</h2>
-            
+
             <?php if (count($usuarios) > 0): ?>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>ID2</th>
                                 <th>Nombre</th>
                                 <th>Usuario</th>
                                 <th>Email</th>
@@ -312,13 +335,18 @@ try {
                                     <td><?php echo htmlspecialchars($usuario['usuario']); ?></td>
                                     <td><?php echo htmlspecialchars($usuario['email']); ?></td>
                                     <td>
-                                        <span class="badge bg-<?php 
-                                            switch($usuario['rol']) {
-                                                case 'administrador': echo 'danger'; break;
-                                                case 'moderador': echo 'warning'; break;
-                                                default: echo 'primary';
-                                            }
-                                        ?>">
+                                        <span class="badge bg-<?php
+                                                                switch ($usuario['rol']) {
+                                                                    case 'administrador':
+                                                                        echo 'danger';
+                                                                        break;
+                                                                    case 'candidato':
+                                                                        echo 'warning';
+                                                                        break;
+                                                                    default:
+                                                                        echo 'primary';
+                                                                }
+                                                                ?>">
                                             <?php echo htmlspecialchars($usuario['rol']); ?>
                                         </span>
                                     </td>
@@ -328,20 +356,20 @@ try {
                                         </span>
                                     </td>
                                     <td><?php echo date('d/m/Y H:i', strtotime($usuario['fecha_creacion'])); ?></td>
-                                   <td>
-    <a href="modificar.php?id=<?php echo $usuario['id']; ?>" class="btn btn-sm btn-info">
-        <i class="fas fa-edit"></i>
-    </a>
-    <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(<?php echo $usuario['id']; ?>)">
-        <i class="fas fa-trash"></i>
-    </button>
-</td>
+                                    <td>
+                                        <a href="modificar.php?id=<?php echo $usuario['id']; ?>" class="btn btn-sm btn-info">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(<?php echo $usuario['id']; ?>)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <span class="text-muted">
                         Total: <?php echo count($usuarios); ?> usuarios
@@ -350,7 +378,7 @@ try {
                         ➕ Agregar Usuario
                     </button>
                 </div>
-                
+
             <?php else: ?>
                 <div class="alert alert-info text-center">
                     <h4>No hay usuarios registrados</h4>
@@ -393,4 +421,5 @@ try {
         }
     </script>
 </body>
+
 </html>

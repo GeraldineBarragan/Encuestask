@@ -163,7 +163,6 @@ if (isset($_GET['id'])) {
         </h6>
       </div>
       <div class="card-body">
-
         <?php if (count($usuarios) > 0): ?>
           <div class="table-responsive">
             <table class="table table-striped table-hover">
@@ -193,7 +192,7 @@ if (isset($_GET['id'])) {
                                               case 'administrador':
                                                 echo 'danger';
                                                 break;
-                                              case 'moderador':
+                                              case 'candidato':
                                                 echo 'warning';
                                                 break;
                                               default:
@@ -212,9 +211,6 @@ if (isset($_GET['id'])) {
                     <td><?php echo date('d/m/Y H:i', strtotime($usuario['fecha_actualizacion'])); ?></td>
                     <td>
                       <button class="btn btn-info btn-editar" data-id="<?= $usuario['id'] ?>">✏️ Editar</button>
-
-
-
                       <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(<?php echo $usuario['id']; ?>)">
                         🗑️ Eliminar
                       </button>
@@ -344,7 +340,7 @@ if (isset($_GET['id'])) {
               <select class="form-select" name="rol" required>
                 <option value="">Seleccionar rol</option>
                 <option value="usuario" <?php echo (isset($_POST['rol']) && $_POST['rol'] == 'usuario') ? 'selected' : ''; ?>>Usuario</option>
-                <option value="moderador" <?php echo (isset($_POST['rol']) && $_POST['rol'] == 'moderador') ? 'selected' : ''; ?>>Moderador</option>
+                <option value="candidato" <?php echo (isset($_POST['rol']) && $_POST['rol'] == 'candidato') ? 'selected' : ''; ?>>Candidato</option>
                 <option value="administrador" <?php echo (isset($_POST['rol']) && $_POST['rol'] == 'administrador') ? 'selected' : ''; ?>>Administrador</option>
               </select>
             </div>
@@ -372,62 +368,5 @@ if (isset($_GET['id'])) {
 
     </div>
   </div>
-  <script>
-    document.querySelectorAll('.btn-editar').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-
-        // Ocultar las secciones A y B
-        document.getElementById('sectionA').style.display = 'none';
-        document.getElementById('sectionB').style.display = 'none';
-
-        // Mostrar sección C y cargar datos
-        const sectionC = document.getElementById('sectionC');
-        sectionC.style.display = 'block';
-
-        // Cargar el formulario de edición usando AJAX
-        fetch(`editar.php?id=${id}`)
-          .then(response => response.text())
-          .then(html => {
-            sectionC.innerHTML = html;
-
-            // Configurar el formulario para envío por AJAX
-            const form = sectionC.querySelector('form');
-            if (form) {
-              form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-
-                fetch(this.action || 'editar.php', {
-                    method: 'POST',
-                    body: formData
-                  })
-                  .then(response => response.text())
-                  .then(result => {
-                    if (result.includes('success')) {
-                      // Si la actualización fue exitosa
-                      alert('Usuario actualizado correctamente');
-                      // Volver a la lista
-                      document.getElementById('sectionA').style.display = 'block';
-                      sectionC.style.display = 'none';
-                      // Recargar solo la tabla
-                      location.reload();
-                    } else {
-                      // Si hubo error, mostrar en el formulario
-                      sectionC.innerHTML = result;
-                    }
-                  });
-              });
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Error al cargar el formulario');
-          });
-      });
-    });
-  </script>
-
-
 
 </div>

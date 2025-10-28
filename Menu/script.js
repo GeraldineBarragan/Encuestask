@@ -10,22 +10,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Alternar entre lista y agregar
-  btnAB.addEventListener('click', () => {
-    if (sectionA.classList.contains('active')) {
-      mostrarSeccion(sectionB);
-    } else {
-      mostrarSeccion(sectionA);
-    }
-  });
-
-  // --- Múltiples botones Editar ---
-  const botonesEditar = document.querySelectorAll('.btn-editar');
-  botonesEditar.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.id;
-      editarUsuario(id);
+  if (btnAB) {
+    btnAB.addEventListener('click', () => {
+      if (sectionA && sectionA.classList.contains('active')) {
+        mostrarSeccion(sectionB);
+      } else {
+        mostrarSeccion(sectionA);
+      }
     });
-  });
+  }
+
+  
+  // --- Delegación: botones Editar sólo dentro de la sección Usuarios (sectionA) ---
+  if (sectionA) {
+    sectionA.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-editar');
+      if (!btn) return;
+      // asegúrate de que el botón esté dentro de sectionA
+      if (!sectionA.contains(btn)) return;
+      const id = btn.dataset.id;
+      if (id) editarUsuario(id);
+    });
+  }
 
 // --- Función para cargar datos del usuario ---
 function editarUsuario(id) {
@@ -72,7 +78,7 @@ function editarUsuario(id) {
                 sectionA.classList.add('active');
                 
                 // Recargar la tabla de usuarios
-                fetch('mostrar_usuarios.php')
+                fetch('usuarios.php')
                   .then(res => res.text())
                   .then(html => {
                     const parser = new DOMParser();
@@ -102,7 +108,6 @@ function editarUsuario(id) {
     })
     .catch(err => console.error('Error cargando usuario:', err));
 }
-
 
 });
 
@@ -267,3 +272,67 @@ function editarUsuario(id) {
       });
 
 
+//Crear encuestas
+  let contadorPreguntas = 0;
+
+        function agregarPregunta() {
+            const template = document.getElementById('template-pregunta');
+            const clone = template.content.cloneNode(true);
+            const preguntaCard = clone.querySelector('.pregunta-card');
+
+            // Actualizar índices
+            contadorPreguntas++;
+            const inputs = preguntaCard.querySelectorAll('[name]');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name').replace('[0]', `[${contadorPreguntas}]`);
+                input.setAttribute('name', name);
+            });
+
+            preguntaCard.querySelector('.numero-pregunta').textContent = contadorPreguntas + 1;
+
+            document.getElementById('preguntas-container').appendChild(preguntaCard);
+        }
+
+        function eliminarPregunta(button) {
+            if (document.querySelectorAll('.pregunta-card').length > 1) {
+                button.closest('.pregunta-card').remove();
+                renumerarPreguntas();
+            } else {
+                alert('Debe haber al menos una pregunta');
+            }
+        }
+
+        function cambiarTipoPregunta(select) {
+            const opcionesContainer = select.closest('.card-body').querySelector('.opciones-container');
+            if (select.value === 'texto_libre') {
+                opcionesContainer.style.display = 'none';
+            } else {
+                opcionesContainer.style.display = 'block';
+            }
+        }
+
+        function agregarOpcion(button) {
+            const opcionesList = button.previousElementSibling;
+            const nuevaOpcion = opcionesList.firstElementChild.cloneNode(true);
+            nuevaOpcion.querySelector('input').value = '';
+            opcionesList.appendChild(nuevaOpcion);
+        }
+
+        function eliminarOpcion(button) {
+            const opcionesList = button.closest('.opciones-list');
+            if (opcionesList.children.length > 1) {
+                button.closest('.input-group').remove();
+            }
+        }
+
+        function renumerarPreguntas() {
+            const preguntas = document.querySelectorAll('.pregunta-card');
+            preguntas.forEach((pregunta, index) => {
+                pregunta.querySelector('.numero-pregunta').textContent = index + 1;
+            });
+        }
+
+        // Agregar primera pregunta al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            agregarPregunta();
+        });
