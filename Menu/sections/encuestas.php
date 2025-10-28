@@ -14,6 +14,11 @@
     color: #383d41;
   }
 </style>
+<?php
+
+include 'encuestas/crear.php';
+?>
+
 <!-- Encuestas Section -->
 <div class="content-section" id="surveys-section">
   <div class="sections-container">

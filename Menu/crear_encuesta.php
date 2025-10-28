@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="mt-4">
-                        <button type="submit" class="btn btn-success btn-lg">
+                        <button type="submit" class="btn btn-success btn-lg" id="crear_encuesta">
                             <i class="fas fa-save me-1"></i>Guardar Encuesta
                         </button>
                         <a href="encuestas.php" class="btn btn-secondary">Cancelar</a>
